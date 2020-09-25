@@ -13,6 +13,32 @@ const config = {
   measurementId: "G-EZ6JX9S4Z2"
 }
 
+// userAuth is an object that we get from auth library (with all info. when user signs in)
+export const createUserProfileDocument = async (userAuth, additionalData) => {
+  if (!userAuth) return;
+  
+  // we will query inside the firestore, to save the user's id in the db
+  const userRef = firestore.doc(`users/${userAuth.uid}`);
+
+  const snapShot = await userRef.get();
+
+  if(!snapShot.exists) {
+    const {displayName, email} = userAuth;
+    const createdAt = new Date();
+    try {
+      await userRef.set({
+        displayName,
+        email,
+        createdAt,
+        ...additionalData
+      })
+    } catch (error) {
+      console.log('error creating user', error.message)
+    }
+  }
+  return userRef;
+} 
+
 firebase.initializeApp(config);
 
 export const auth = firebase.auth();
