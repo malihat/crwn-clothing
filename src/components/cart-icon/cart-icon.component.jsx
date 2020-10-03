@@ -9,7 +9,7 @@ const CartIcon = (props) => {
   return (  
     <div className='cart-icon' onClick={props.toggleCartHidden}>
       <ShoppingIcon className="shopping-icon" />
-      <span className='item-count'> 0 </span>
+      <span className='item-count'> {props.itemCount} </span>
     </div>
   );
 }
@@ -17,5 +17,9 @@ const CartIcon = (props) => {
 const mapDispatchToProps = dispatch => ({
   toggleCartHidden: () => dispatch(toggleCartHidden())
 })
+
+const mapStateToProps = ({ cart: {cartItems}}) => ({
+  itemCount: cartItems.reduce((accumulatedQuantity, cartItem) => accumulatedQuantity + cartItem.quantity, 0)
+})
  
-export default connect(null, mapDispatchToProps)(CartIcon);
+export default connect(mapStateToProps, mapDispatchToProps)(CartIcon);
